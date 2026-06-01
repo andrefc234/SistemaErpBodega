@@ -1,0 +1,239 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id          String   @id @default(cuid())
+  nombre      String
+  clave       String   @unique
+  telefono    String?
+  numLicencia String?
+  role        String
+  password    String
+  createdAt   DateTime @default(now())
+}
+
+model Producto {
+  id              String   @id @default(cuid())
+  nombre          String
+  codigoBarras    String   @unique
+  descripcion     String?
+  img             String?
+  cantidadAlmacen Int      @default(0)
+  createdAt       DateTime @default(now())
+}
+
+model Cliente {
+  id            String            @id @default(cuid())
+  canal         String
+  clave         String            @unique
+  nombreCliente String
+  razonSocial   String?
+  productos     ClienteProducto[]
+  createdAt     DateTime          @default(now())
+}
+
+model ClienteProducto {
+  id           String  @id @default(cuid())
+  clienteId    String
+  cliente      Cliente @relation(fields: [clienteId], references: [id])
+  nombre       String
+  precio       Float
+  codigoBarras String
+}
+
+model Tienda {
+  id                   String         @id @default(cuid())
+  canal                String
+  nombreCliente        String
+  TDA                  String         @unique
+  nombreTienda         String
+  empleadoPromotoriaId String?
+  empleadoEntregaId    String?
+  diasPromotoria       DiaPromotoria[]
+  diasEntrega          DiaEntrega[]
+  createdAt            DateTime       @default(now())
+}
+
+model DiaPromotoria {
+  id       String @id @default(cuid())
+  tiendaId String
+  tienda   Tienda @relation(fields: [tiendaId], references: [id])
+  dia      Int
+}
+
+model DiaEntrega {
+  id       String @id @default(cuid())
+  tiendaId String
+  tienda   Tienda @relation(fields: [tiendaId], references: [id])
+  dia      Int
+}
+
+model Pedido {
+  id              String          @id @default(cuid())
+  TDA             String
+  fechaP          String?
+  fechaE          String?
+  nombreCliente   String?
+  canal           String?
+  empleado        String?
+  estatus         String          @default("pendiente")
+  totalPedido     Int?
+  fechaPromotoria String?
+  productos       PedidoProducto[]
+  createdAt       DateTime        @default(now())
+}
+
+model PedidoProducto {
+  id         String  @id @default(cuid())
+  pedidoId   String
+  pedido     Pedido  @relation(fields: [pedidoId], references: [id])
+  productoId String?
+  nombre     String
+  numero     Int     @default(0)
+  cantidad   Int?
+}
+
+model Picking {
+  id              String           @id @default(cuid())
+  TDA             String
+  fecha           Int?
+  empleadoEntrega String?
+  estatus         String           @default("pendiente")
+  tienda          String?
+  idPedido        String           @unique
+  productos       PickingProducto[]
+  createdAt       DateTime         @default(now())
+}
+
+model PickingProducto {
+  id         String  @id @default(cuid())
+  pickingId  String
+  picking    Picking @relation(fields: [pickingId], references: [id])
+  productoId String?
+  nombre     String
+  numero     Int     @default(0)
+  cantidad   Int?
+}
+
+model Visita {
+  id            String          @id @default(cuid())
+  folio         String?         @unique
+  img           String?
+  nombreTienda  String
+  TDA           String
+  promotor      String
+  fecha         String
+  bajasG        Int             @default(0)
+  altasG        Int             @default(0)
+  totalP        Int             @default(0)
+  observaciones String?
+  rotacion      String?
+  estatus       String          @default("pendiente")
+  productos     VisitaProducto[]
+  createdAt     DateTime        @default(now())
+}
+
+model VisitaProducto {
+  id         String  @id @default(cuid())
+  visitaId   String
+  visita     Visita  @relation(fields: [visitaId], references: [id])
+  productoId String?
+  nombre     String
+  alta       Int     @default(0)
+  bajas      Int     @default(0)
+  existencia Int     @default(0)
+}
+
+model Liquidacion {
+  id               String               @id @default(cuid())
+  folioLiquidacion String               @unique
+  numeroRemison    String?
+  nombreTienda     String
+  vendedor         String?
+  fechaLiquidacion String
+  montoFactura     Float?
+  TDA              String
+  piezasEntregadas Int                  @default(0)
+  productos        LiquidacionProducto[]
+  createdAt        DateTime             @default(now())
+}
+
+model LiquidacionProducto {
+  id            String      @id @default(cuid())
+  liquidacionId String
+  liquidacion   Liquidacion @relation(fields: [liquidacionId], references: [id])
+  productoId    String?
+  nombre        String
+  existencia    Int         @default(0)
+}
+
+model Facturacion {
+  id               String   @id @default(cuid())
+  folioLiquidacion String
+  folioInterno     String?
+  fechaLiquidacion String
+  fechaFacturacion String
+  TDA              String
+  nombreTienda     String?
+  montoFactura     Float?
+  numeroFactura    String?
+  nombreCliente    String?
+  piezasEntregadas Int?
+  nombre           String?
+  createdAt        DateTime @default(now())
+}
+
+model Cambio {
+  id             String          @id @default(cuid())
+  fecha          String
+  TDA            String
+  tipoMovimiento String
+  nombreTienda   String?
+  nombre         String?
+  productos      CambioProducto[]
+  createdAt      DateTime        @default(now())
+}
+
+model CambioProducto {
+  id         String  @id @default(cuid())
+  cambioId   String
+  cambio     Cambio  @relation(fields: [cambioId], references: [id])
+  productoId String?
+  nombre     String
+  numero     Int     @default(0)
+}
+
+model PedidoFabricante {
+  id        String                    @id @default(cuid())
+  fecha     String
+  productos PedidoFabricanteProducto[]
+  createdAt DateTime                  @default(now())
+}
+
+model PedidoFabricanteProducto {
+  id                 String          @id @default(cuid())
+  pedidoFabricanteId String
+  pedidoFabricante   PedidoFabricante @relation(fields: [pedidoFabricanteId], references: [id])
+  productoId         String?
+  nombre             String
+  cantidad           Int             @default(0)
+}
+
+model EstatusAlmacen {
+  id        String   @id @default(cuid())
+  fecha     String
+  createdAt DateTime @default(now())
+}
+
+model EstatusAlmacenProducto {
+  id               String @id @default(cuid())
+  estatusAlmacenId String
+  nombre           String
+  img              String?
+}
