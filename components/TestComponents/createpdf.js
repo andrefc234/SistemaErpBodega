@@ -1,5 +1,5 @@
 import React,{useState,useEffect} from 'react'
-import ReactPDF from 'react-to-pdf'
+import ReactPDF from './ReactToPdf'
 import Pdf from './Pdf'
 import Link from 'next/link'
 import axios from 'axios'
@@ -12,7 +12,7 @@ const CrearRemision = ({user}) =>{
   const Renderon = () => {
     const [isLoading, setLoading] = useState(false)
     const [tienda, setTienda] = useState(null)
-    fetch(`http://${process.env.IP}:5000/api/v1/cliente `)
+    fetch(`/api/cliente `)
     .then((res) => res.json())
     .then((data) => {
       setTienda(data.data)
@@ -47,7 +47,7 @@ const CrearRemision = ({user}) =>{
     const [cliente, setcliente] = useState(null)
     const [isproducto, setisproducto] = useState(false)
     const [producto, setproducto] = useState(null)
-    fetch(`http://${process.env.IP}:5000/api/v1/cliente `)
+    fetch(`/api/cliente `)
     .then((res) => res.json())
     .then((data) => {
       setcliente(data.data)
@@ -170,7 +170,7 @@ const handleSubmit = async (e) => {
 
 
   setdataC(data)
-  //const resp = await axios.post(`http://${process.env.IP}:5000/api/v1/remision/crear`,data)
+  //const resp = await axios.post(`/api/remision/crear`,data)
   
   
   

@@ -4,7 +4,7 @@ import Navb from '../Navb'
 import {Container,ListGroup,Row,Col,Modal,Button,Form,Table,Stack,Tab,Accordion} from 'react-bootstrap'
 import lodash from 'lodash'
 import Pdf from '../TestComponents/Pdf'
-import ReactPDF from 'react-to-pdf'
+import ReactPDF from '../TestComponents/ReactToPdf'
 import axios from 'axios'
 import Image from 'next/image'
 import Router from 'next/router'
@@ -16,7 +16,7 @@ export default function CrearCliente({user})  {
     const [submitted, setSubmitted] = useState(false);
     useEffect(() => {
       setLoading(true)
-      fetch(`http://${process.env.IP}:5000/api/v1/productos`)
+      fetch(`/api/productos`)
         .then((res) => res.json())
         .then((data) => {
           setData(data.data)
@@ -80,7 +80,7 @@ export default function CrearCliente({user})  {
        productos:prod
     }
     console.log(data)
-    const resp = await axios.post(`http://${process.env.IP}:5000/api/v1/cliente/crear`,data)
+    const resp = await axios.post(`/api/cliente/crear`,data)
     setSubmitted(true);
 
   }

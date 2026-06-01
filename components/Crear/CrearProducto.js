@@ -4,7 +4,7 @@ import Navb from '../Navb'
 import {Container,Card,Row,Button,Form,Col} from 'react-bootstrap'
 import lodash from 'lodash'
 import Pdf from '../TestComponents/Pdf'
-import ReactPDF from 'react-to-pdf'
+import ReactPDF from '../TestComponents/ReactToPdf'
 import axios from 'axios'
 import Image from 'next/image'
 import Router from 'next/router'
@@ -19,7 +19,7 @@ export default function CrearProducto() {
 
     const fetchcliente = async (d) => {
       var result = [];
-    const resp = await fetch(`http://${process.env.IP}:5000/api/v1/cliente`)
+    const resp = await fetch(`/api/cliente`)
      const dtajson = await resp.json()
      const crdta = dtajson.data
       return setcliente(crdta);  
@@ -50,16 +50,16 @@ export default function CrearProducto() {
         formData.append('codigoBarras', data.codigoBarras)
         formData.append('descripcion', data.descripcion)
        
-       const resp = await axios.post(`http://${process.env.IP}:5000/api/v1/productos/crear`,formData)
+       const resp = await axios.post(`/api/productos/crear`,formData)
   
       
      var nombresClientes = [cliente.map(e => e.nombreCliente)]
-     var ids = [cliente.map(e => e._id )]
+     var ids = [cliente.map(e => e.id )]
      console.log(nombresClientes)
       for (let index = 0; index < nombresClientes[0].length; index++) {
         
         const dataC = {nombre:e.target.producto.value,precio:document.getElementById(nombresClientes[0][index]).value,codigoBarras:data.codigoBarras}
-       const resp = await axios.put(`http://${process.env.IP}:5000/api/v1/productos/cliente/${ids[0][index]}`,dataC)
+       const resp = await axios.put(`/api/productos/cliente/${ids[0][index]}`,dataC)
         
       }
      var fech = new Date()

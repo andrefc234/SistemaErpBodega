@@ -3,7 +3,7 @@ import Navb from '../Navb'
 import {Container,ListGroup,Row,Col,Modal,Button,Form,Table,Stack,Tab,Accordion} from 'react-bootstrap'
 import lodash from 'lodash'
 import Pdf from '../TestComponents/Pdf'
-import ReactPDF from 'react-to-pdf'
+import ReactPDF from '../TestComponents/ReactToPdf'
 import axios from 'axios'
 import Image from 'next/image'
 import Router from 'next/router'
@@ -23,13 +23,13 @@ export default function CrearTienda({user}) {
       }
     }, [submitted]);
     const getuser = async () => {
-        const res = await fetch(`http://${process.env.IP}:5000/api/v1/auth/users`)
+        const res = await fetch(`/api/auth/users`)
         const dta = await res.json()
         const crdta = dta.data
        return setusers(crdta)
       }
     const getclients = async () => {
-        const res = await fetch(`http://${process.env.IP}:5000/api/v1/cliente`)
+        const res = await fetch(`/api/cliente`)
         const dta = await res.json() 
         const crdta = dta.data
         console.log(crdta)
@@ -149,7 +149,7 @@ export default function CrearTienda({user}) {
        
        
        console.log(data.diaE)
-       const resp = await axios.post(`http://${process.env.IP}:5000/api/v1/tienda/crear`,data)
+       const resp = await axios.post(`/api/tienda/crear`,data)
       alert('agregado')
   
       }

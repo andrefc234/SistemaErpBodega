@@ -4,7 +4,7 @@ import Navb from '../Navb'
 import {Container,ListGroup,Row,Col,Modal,Button,Form,Table,Stack,Tab,Accordion} from 'react-bootstrap'
 import lodash from 'lodash'
 import Pdf from '../TestComponents/Pdf'
-import ReactPDF from 'react-to-pdf'
+import ReactPDF from '../TestComponents/ReactToPdf'
 import axios from 'axios'
 import Image from 'next/image'
 import Router from 'next/router'
@@ -22,7 +22,7 @@ export default function VerPedidos({user})  {
     
     const fetchdtaH= async () => {
       var result = [];
-      const resp = await fetch(`http://${process.env.IP}:5000/api/v1/almacen/pedido/`)
+      const resp = await fetch(`/api/almacen/pedido/`)
       const dtajson = await resp.json()
       const crdta = dtajson.data
        
@@ -33,7 +33,7 @@ export default function VerPedidos({user})  {
       }
     const fetchptda = async (d) => {
       var result = [];
-    const resp = await fetch(`http://${process.env.IP}:5000/api/v1/productos`)
+    const resp = await fetch(`/api/productos`)
      const dtajson = await resp.json()
      const crdta = dtajson.data
      
@@ -84,7 +84,7 @@ export default function VerPedidos({user})  {
     }, [submitted])
     const [users, setusers] = useState([])
     const getuser = async () => {
-      const res = await fetch(`http://${process.env.IP}:5000/api/v1/auth/users`)
+      const res = await fetch(`/api/auth/users`)
       const dta = await res.json()
       const crdta = dta.data
       var vendedores = []
@@ -119,7 +119,7 @@ export default function VerPedidos({user})  {
       empleadoEntrega:empleado,
       productos:prod,
       estatus:'pendiente',
-      idPedido:d._id
+      idPedido:d.id
       
       
     }
@@ -127,8 +127,8 @@ export default function VerPedidos({user})  {
     const update = {
       estatus:'liberado'
     }
-    const respPicking = await axios.post(`http://${process.env.IP}:5000/api/v1/picking/crear`,data)
-    const updatePedido = await axios.put(`http://${process.env.IP}:5000/api/v1/almacen/pedido/update/${d._id}`,update)
+    const respPicking = await axios.post(`/api/picking/crear`,data)
+    const updatePedido = await axios.put(`/api/almacen/pedido/update/${d.id}`,update)
   console.log(updatePedido)
   setSubmitted(true);
   
@@ -136,7 +136,7 @@ export default function VerPedidos({user})  {
     const days = ['Domingo','Lunes','Martes','Miercoles','Jueves','Viernes','Sabado']
   const handleEliminar = async (id) => {
 
-const resp = await axios.delete(`http://${process.env.IP}:5000/api/v1/almacen/pedido/delete/${id}`)
+const resp = await axios.delete(`/api/almacen/pedido/delete/${id}`)
 console.log(resp)
   }
     return(<>
@@ -178,7 +178,7 @@ console.log(resp)
             <td key='-' id={`total${d.TDA}`}>{d.totalPedido}</td>
             <td><Form.Select id={`fechaE${d.TDA}`}>
               <option>-</option>
-              {d.fecha.map((f)=> {
+              {(d.fecha || []).map((f)=> {
                 return(
                 <option>{days[f.dia]}</option>)
               })}
@@ -204,7 +204,7 @@ console.log(resp)
             <td>{d.fechaPromotoria}</td>
               <td>{activeEditar ? <Button onClick={() => setactiveEditar(false) } >regresar</Button>:<Button onClick={() => setactiveEditar(true)} >editar empleado</Button>}</td>
               <td><Button onClick={() => handlePicking(d)}>Crear picking</Button></td>
-              <td><Button onClick={()=>handleEliminar(d._id)}>Eliminar </Button></td>
+              <td><Button onClick={()=>handleEliminar(d.id)}>Eliminar </Button></td>
           </tr>
              
           

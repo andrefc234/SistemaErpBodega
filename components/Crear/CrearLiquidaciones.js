@@ -3,7 +3,7 @@ import Navb from '../Navb'
 import {Container,ListGroup,Row,Col,Modal,Button,Form,Table,Stack,Tab,Accordion} from 'react-bootstrap'
 import lodash from 'lodash'
 import Pdf from '../TestComponents/Pdf'
-import ReactPDF from 'react-to-pdf'
+import ReactPDF from '../TestComponents/ReactToPdf'
 import axios from 'axios'
 import Image from 'next/image'
 import Router from 'next/router'
@@ -15,7 +15,7 @@ export default function CrearLiquidacion({user}) {
     const [tienda, setTienda] = useState(null)
     const [submitted, setSubmitted] = useState(false);
     const getTiendas = async  () => {
-      const res = await fetch(`http://${process.env.IP}:5000/api/v1/tienda`)
+      const res = await fetch(`/api/tienda`)
       const data = await res.json()
       
        const crdta =  data.data
@@ -27,7 +27,7 @@ export default function CrearLiquidacion({user}) {
     const [cliente, setcliente] = useState([])
     
     const getClientsres = async  ()=> {
-     const res = await  fetch(`http://${process.env.IP}:5000/api/v1/cliente`)
+     const res = await  fetch(`/api/cliente`)
     const data = await res.json()
     setLoading(false)
       return setcliente(data.data)
@@ -64,7 +64,7 @@ export default function CrearLiquidacion({user}) {
         
           useEffect(() => {
             setLoading(true)
-            fetch(`http://${process.env.IP}:5000/api/v1/productos`)
+            fetch(`/api/productos`)
               .then((res) => res.json())
               .then((data) => {
                 setData(data.data)
@@ -136,7 +136,7 @@ export default function CrearLiquidacion({user}) {
             
         }
         console.log(data)
-        const resp = await axios.post(`http://${process.env.IP}:5000/api/v1/liquidacion/crear`,data)
+        const resp = await axios.post(`/api/liquidacion/crear`,data)
         console.log(resp)
         setSubmitted(true);
 

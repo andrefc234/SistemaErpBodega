@@ -3,7 +3,7 @@ import Navb from '../Navb'
 import {Container,ListGroup,Row,Col,Modal,Button,Form,Table,Stack,Tab,Accordion} from 'react-bootstrap'
 import lodash from 'lodash'
 import Pdf from '../TestComponents/Pdf'
-import ReactPDF from 'react-to-pdf'
+import ReactPDF from '../TestComponents/ReactToPdf'
 import axios from 'axios'
 import Image from 'next/image'
 import Router from 'next/router'
@@ -28,7 +28,7 @@ import VerPedidos from '../Almacen/VerPedido'
 
 
 
-const CrearPedido = ({user}) => {
+export const CrearPedido = ({user}) => {
   const [pta, setpta] = useState(null)
   const [clientes, setclientes] = useState([{nombreCliente:'',canal:''}])
   const [tiendas, settiendas] = useState(null)
@@ -58,21 +58,21 @@ let count=1
   }
   const fetchptda = async (d) => {
     var result = [];
-  const resp = await fetch(`http://${process.env.IP}:5000/api/v1/productos`)
+  const resp = await fetch(`/api/productos`)
    const dtajson = await resp.json()
    const crdta = dtajson.data
    setPrdlen(crdta.length)
     return setpta(crdta);  
   }
   const getclients = async () => {
-    const res = await fetch(`http://${process.env.IP}:5000/api/v1/cliente`)
+    const res = await fetch(`/api/cliente`)
     const dta = await res.json() 
     const crdta = dta.data
     console.log(crdta)
     return setclientes(crdta)
   }
   const getTiendas = async () => {
-    const res = await fetch(`http://${process.env.IP}:5000/api/v1/tienda`)
+    const res = await fetch(`/api/tienda`)
     const dta = await res.json() 
     const crdta = dta.data
     console.log(crdta)
@@ -112,7 +112,7 @@ let count=1
         
     }
     console.log(data)
-    const resp = await axios.post(`http://${process.env.IP}:5000/api/v1/pedido/crear`,data)
+    const resp = await axios.post(`/api/pedido/crear`,data)
   
 
   }
@@ -234,7 +234,7 @@ let count=1
 
 
 //****picking list****
-const VerPicking= ({user}) => {
+export const VerPicking= ({user}) => {
   const initialState = {
 
     productos:[],
@@ -244,10 +244,10 @@ const VerPicking= ({user}) => {
   const [dta, setdta] = useState([initialState])
   const [pta, setpta] = useState([])
   const getdata = async () => {
-    const resp = await fetch(`http://${process.env.IP}:5000/api/v1/picking/pendientes/`)
+    const resp = await fetch(`/api/picking/pendientes/`)
   const dtajson = await resp.json()
   const crdta = dtajson.data
-  const respPr = await fetch(`http://${process.env.IP}:5000/api/v1/productos`)
+  const respPr = await fetch(`/api/productos`)
   const dtajsonPR = await respPr.json()
   const crdtaPR = dtajsonPR.data
   
@@ -269,7 +269,7 @@ const VerPicking= ({user}) => {
      estatus:est
  
      }
-    const resp = await axios.put(`http://${process.env.IP}:5000/api/v1/picking/update/${e}`,data)
+    const resp = await axios.put(`/api/picking/update/${e}`,data)
  
  
  
@@ -281,18 +281,18 @@ const VerPicking= ({user}) => {
     const update = {
       estatus:'pendiente'
     }
-    const updatePedido = await axios.put(`http://${process.env.IP}:5000/api/v1/almacen/pedido/update/${d.idPedido}`,update)
+    const updatePedido = await axios.put(`/api/almacen/pedido/update/${d.idPedido}`,update)
     console.log(updatePedido)
     const data = {
       estatus:'no enviado'
   
       }
-     const resp = await axios.put(`http://${process.env.IP}:5000/api/v1/picking/update/${d._id}`,data)
+     const resp = await axios.put(`/api/picking/update/${d.id}`,data)
   }
   const handleEliminarPedido = async (d) => {
    
    
-    const eliminarPedido = await axios.delete(`http://${process.env.IP}:5000/api/v1/picking/delete/${d._id}`)
+    const eliminarPedido = await axios.delete(`/api/picking/delete/${d.id}`)
     alert('Picking Eliminado')
   }
   return(<>
@@ -345,7 +345,7 @@ const VerPicking= ({user}) => {
 <td>
 <Form >
         {!d.estatus || d.estatus === 'pendiente' && (<Form.Group className="mb-3">       
-        <Form.Select  onChange={() => updPicking(d._id)}>
+        <Form.Select  onChange={() => updPicking(d.id)}>
           <option key='-'>pendiente</option>
           <option id='estatus'  key='-'>liberado</option>
         </Form.Select>
@@ -371,7 +371,7 @@ const VerPicking= ({user}) => {
    
   </>)
 }
-const VerPickingTD= ({user}) => {
+export const VerPickingTD= ({user}) => {
   const initialState = {
     fecha:[],
     productos:[]
@@ -380,10 +380,10 @@ const VerPickingTD= ({user}) => {
   const [dta, setdta] = useState([initialState])
   const [pta, setpta] = useState([])
   const getdata = async () => {
-    const resp = await fetch(`http://${process.env.IP}:5000/api/v1/picking/`)
+    const resp = await fetch(`/api/picking/`)
   const dtajson = await resp.json()
   const crdta = dtajson.data
-  const respPr = await fetch(`http://${process.env.IP}:5000/api/v1/productos`)
+  const respPr = await fetch(`/api/productos`)
   const dtajsonPR = await respPr.json()
   const crdtaPR = dtajsonPR.data
   
@@ -405,7 +405,7 @@ const updPicking = async (e) => {
      estatus:est
  
      }
-    const resp = await axios.put(`http://${process.env.IP}:5000/api/v1/picking/update/${e}`,data)
+    const resp = await axios.put(`/api/picking/update/${e}`,data)
 }
   
   
@@ -464,7 +464,7 @@ const updPicking = async (e) => {
         </Form.Control>
         </Form.Group>)}
         {!d.estatus || d.estatus === 'pendiente' && (<Form.Group className="mb-3">       
-        <Form.Select  onChange={() => updPicking(d._id)}>
+        <Form.Select  onChange={() => updPicking(d.id)}>
           <option key='-'>pendiente</option>
           <option key='-' id='estatus'>liberado</option>
         </Form.Select>
@@ -492,7 +492,7 @@ const updPicking = async (e) => {
 
 //liquidaciones
 
-const LiquidacionAdmin = (user) => {
+export const LiquidacionAdmin = (user) => {
   const initialState = {
     numeroLiquidacion:"",
   TDA:"",
@@ -513,7 +513,7 @@ const LiquidacionAdmin = (user) => {
 var monto;
 const fetchdta = async (d) => {
     var result = [];
-    const resp = await fetch(`http://${process.env.IP}:5000/api/v1/liquidacion/`)
+    const resp = await fetch(`/api/liquidacion/`)
     const dtajson = await resp.json()
     const crdta = dtajson.data
     console.log(crdta.length)
@@ -534,7 +534,7 @@ const fetchdta = async (d) => {
   }
 const fetchdtaP = async (d) => {
     var result = [];
-    const resp = await fetch(`http://${process.env.IP}:5000/api/v1/liquidacion/unica/${d}`)
+    const resp = await fetch(`/api/liquidacion/unica/${d}`)
     const dtajson = await resp.json()
     const crdta = dtajson.data
 
@@ -545,7 +545,7 @@ const fetchdtaP = async (d) => {
   }
 const fetchptda = async (d) => {
     var result = [];
-    const resp = await fetch(`http://${process.env.IP}:5000/api/v1/productos`)
+    const resp = await fetch(`/api/productos`)
    const dtajson = await resp.json()
    const crdta = dtajson.data
    
@@ -673,7 +673,7 @@ const Accor = () => {
   </>)
 }
 //remision
-const CrearRemision = ({user}) =>{  
+export const CrearRemision = ({user}) =>{  
   const [prdlen, setPrdlen] = useState(0)
  
 
@@ -685,7 +685,7 @@ const CrearRemision = ({user}) =>{
     const [producto, setproducto] = useState(null)
     const [canal, setcanal] = useState(null)
     const getclients = async () => {
-      const res = await fetch(`http://${process.env.IP}:5000/api/v1/cliente`)
+      const res = await fetch(`/api/cliente`)
       const dta = await res.json() 
       const crdta = dta.data
       console.log(crdta)
@@ -780,8 +780,6 @@ const CrearRemision = ({user}) =>{
 </>) :(<></>)}
                     </>)
                   })}
-  
-  }
   <Button  onClick={() =>handleSubmit(clientes)}> Crear</Button>
   </>)
                   
@@ -849,7 +847,7 @@ const handleSubmit = async (c) => {
 
 
   setdataC(data)
-  //const resp = await axios.post(`http://${process.env.IP}:5000/api/v1/remision/crear`,data)
+  //const resp = await axios.post(`/api/remision/crear`,data)
   
   
   
@@ -917,7 +915,7 @@ const VerRemisionD = () => {
   
   const fetchdta = async (d) => {
     var result = [];
-  const resp = await fetch(`http://${process.env.IP}:5000/api/v1/remision/unica/${d}`)
+  const resp = await fetch(`/api/remision/unica/${d}`)
    const dtajson = await resp.json()
    const crdta = dtajson.data
    
@@ -928,7 +926,7 @@ const VerRemisionD = () => {
   }
   const fetchptda = async (d) => {
     var result = [];
-  const resp = await fetch(`http://${process.env.IP}:5000/api/v1/productos`)
+  const resp = await fetch(`/api/productos`)
    const dtajson = await resp.json()
    const crdta = dtajson.data
    
@@ -1019,11 +1017,11 @@ const VerRemisionD = () => {
   </>)
 }
 //cambios
-const CrearCambio = ({user}) =>{  const [prdlen, setPrdlen] = useState(0)
+export const CrearCambio = ({user}) =>{  const [prdlen, setPrdlen] = useState(0)
   const Rtienda = () => {
     const [isLoading, setLoading] = useState(false)
     const [tienda, setTienda] = useState(null)
-    fetch(`http://${process.env.IP}:5000/api/v1/tienda `)
+    fetch(`/api/tienda `)
     .then((res) => res.json())
     .then((data) => {
       setTienda(data.data)
@@ -1065,7 +1063,7 @@ const CrearCambio = ({user}) =>{  const [prdlen, setPrdlen] = useState(0)
   
     useEffect(() => {
       setLoading(true)
-      fetch(`http://${process.env.IP}:5000/api/v1/productos`)
+      fetch(`/api/productos`)
         .then((res) => res.json())
         .then((data) => {
           setData(data.data)
@@ -1139,7 +1137,7 @@ const handleSubmit = async (e) => {
     
 }
   
-  const resp = await axios.post(`http://${process.env.IP}:5000/api/v1/cambios/crear`,data)
+  const resp = await axios.post(`/api/cambios/crear`,data)
   console.log(resp)
   
 
@@ -1180,7 +1178,7 @@ const handleSubmit = async (e) => {
   </Container>
   </>)
 }
-const VerCambios = ({user}) => {
+export const VerCambios = ({user}) => {
   const initialState = {
 
     producto:[]
@@ -1190,7 +1188,7 @@ const VerCambios = ({user}) => {
   
   const fetchdta = async (d) => {
   var result = [];
-  const resp = await fetch(`http://${process.env.IP}:5000/api/v1/cambios/${d}`)
+  const resp = await fetch(`/api/cambios/${d}`)
   const dtajson = await resp.json()
   const crdta = dtajson.data
    
@@ -1201,7 +1199,7 @@ const VerCambios = ({user}) => {
   }
   const fetchdtaH= async () => {
     var result = [];
-    const resp = await fetch(`http://${process.env.IP}:5000/api/v1/cambios/`)
+    const resp = await fetch(`/api/cambios/`)
     const dtajson = await resp.json()
     const crdta = dtajson.data
      
@@ -1212,7 +1210,7 @@ const VerCambios = ({user}) => {
     }
   const fetchptda = async (d) => {
     var result = [];
-  const resp = await fetch(`http://${process.env.IP}:5000/api/v1/productos`)
+  const resp = await fetch(`/api/productos`)
    const dtajson = await resp.json()
    const crdta = dtajson.data
    
@@ -1316,12 +1314,12 @@ const VerCambios = ({user}) => {
   </>)
 }
 //facturacion
-const CrearFactura = ({user}) =>{  
+export const CrearFactura = ({user}) =>{  
   const [prdlen, setPrdlen] = useState(0)
   const Rtienda = () => {
     const [isLoading, setLoading] = useState(false)
     const [tienda, setTienda] = useState(null)
-    fetch(`http://${process.env.IP}:5000/api/v1/tienda `)
+    fetch(`/api/tienda `)
     .then((res) => res.json())
     .then((data) => {
       setTienda(data.data)
@@ -1358,7 +1356,7 @@ const CrearFactura = ({user}) =>{
   const Rcliente = () => {
     const [isLoading, setLoading] = useState(false)
     const [tienda, setTienda] = useState(null)
-    fetch(`http://${process.env.IP}:5000/api/v1/cliente `)
+    fetch(`/api/cliente `)
     .then((res) => res.json())
     .then((data) => {
       setTienda(data.data)
@@ -1403,7 +1401,7 @@ const handleSubmit = async (e) => {
     piezasEntregadas:e.target.piezasEntregadas.value
 }
   console.log(data)
-  const resp = await axios.post(`http://${process.env.IP}:5000/api/v1/facturacion/crear`,data)
+  const resp = await axios.post(`/api/facturacion/crear`,data)
   Router.reload('/')
   
   
@@ -1463,7 +1461,7 @@ const handleSubmit = async (e) => {
   </Container>
   </>)
 }
-const VerFactura = ({user}) => {
+export const VerFactura = ({user}) => {
   const initialState = {
 
     producto:[]
@@ -1473,7 +1471,7 @@ const VerFactura = ({user}) => {
   
   const fetchdta = async (d) => {
   var result = [];
-  const resp = await fetch(`http://${process.env.IP}:5000/api/v1/facturacion/${d}`)
+  const resp = await fetch(`/api/facturacion/${d}`)
   const dtajson = await resp.json()
   const crdta = dtajson.data
    
@@ -1484,7 +1482,7 @@ const VerFactura = ({user}) => {
   }
   const fetchdtaH= async () => {
     var result = [];
-    const resp = await fetch(`http://${process.env.IP}:5000/api/v1/facturacion/`)
+    const resp = await fetch(`/api/facturacion/`)
     const dtajson = await resp.json()
     const crdta = dtajson.data
      

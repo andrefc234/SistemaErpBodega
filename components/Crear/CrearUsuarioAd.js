@@ -3,7 +3,7 @@ import Navb from '../Navb'
 import {Container,ListGroup,Row,Col,Modal,Button,Form,Table,Stack,Tab,Accordion} from 'react-bootstrap'
 import lodash from 'lodash'
 import Pdf from '../TestComponents/Pdf'
-import ReactPDF from 'react-to-pdf'
+import ReactPDF from '../TestComponents/ReactToPdf'
 import axios from 'axios'
 import Image from 'next/image'
 import Router from 'next/router'
@@ -30,7 +30,7 @@ export default function CrearUsuarioAd() {
           password: e.target.password.value,
         }
         console.log(data)
-        const resp = await axios.post(`http://${process.env.IP}:5000/api/v1/auth/register`,data)
+        const resp = await axios.post(`/api/auth/register`,data)
         console.log(resp)
         setSubmitted(true);
         alert('agregado')
