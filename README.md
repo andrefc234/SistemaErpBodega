@@ -1,34 +1,87 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# Sistema ERP Bodega
 
-## Getting Started
+Web app para la gestión de visitas de promotoría, pedidos, picking, liquidaciones y facturación de una cervecería/distribuidora.
 
-First, run the development server:
+## Tecnologías
+
+- **Next.js** (Pages Router)
+- **React 19**
+- **Tailwind CSS** + **react-bootstrap**
+- **Prisma ORM** + **SQLite**
+- **SQLite** (archivo local, sin servidor de base de datos)
+
+## Requisitos
+
+- Node.js 18+
+- npm
+
+## Setup rápido
 
 ```bash
+# 1. Instalar dependencias
+npm install
+
+# 2. Crear BD y cargar datos de prueba
+npm run seed
+
+# 3. Iniciar servidor de desarrollo
 npm run dev
-# or
-yarn dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Abrir [http://localhost:3000](http://localhost:3000).
 
-You can start editing the page by modifying `pages/index.js`. The page auto-updates as you edit the file.
+## Accesos de prueba
 
-[API routes](https://nextjs.org/docs/api-routes/introduction) can be accessed on [http://localhost:3000/api/hello](http://localhost:3000/api/hello). This endpoint can be edited in `pages/api/hello.js`.
+| Usuario     | Clave        | Rol      |
+|-------------|-------------|----------|
+| admin       | admin123    | admin    |
+| promotor    | promotor123 | promotor |
+| vendedor    | vendedor123 | admin    |
+| repartidor  | repartidor123 | admin  |
 
-The `pages/api` directory is mapped to `/api/*`. Files in this directory are treated as [API routes](https://nextjs.org/docs/api-routes/introduction) instead of React pages.
+## Estructura del proyecto
 
-## Learn More
+```
+components/
+├── Almacen/          # Pedidos, picking, fabricante
+├── Crear/            # Formularios de creación (producto, cliente, tienda, etc.)
+├── Dashboard/        # Panel principal y enrutador de vistas
+├── DatosMaestros/    # CRUD de productos, clientes, tiendas
+├── Layout/           # Sidebar, navegación
+├── Liquidacion/      # Liquidaciones diarias
+├── Promotoria/       # Visitas (crear y consultar)
+└── ui/               # Componentes reutilizables (Button, Table, Card, Badge, etc.)
 
-To learn more about Next.js, take a look at the following resources:
+pages/
+├── api/              # API REST (Prisma)
+├── index.js          # Única página (SPA con vistas internas)
+└── login.js          # Página de inicio de sesión
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+prisma/
+├── schema.prisma     # Modelo de datos
+└── seed.js           # Datos de prueba
+```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
+## Flujo principal
 
-## Deploy on Vercel
+1. **Visita de promotoría** — El promotor visita una tienda, registra altas/bajas/existencia de cada producto. Si hay altas > 0, se genera automáticamente un pedido.
+2. **Pedido** — Queda en estatus `pendiente` hasta que se libera.
+3. **Picking** — Al liberar un pedido se crea un picking list para el almacén.
+4. **Liquidación** — Cuando se entrega, se registra la liquidación con montos y piezas.
+5. **Facturación** — Las liquidaciones pasan a facturación mensual.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Comandos útiles
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+```bash
+npm run dev        # Servidor de desarrollo
+npm run build      # Build de producción
+npm run seed       # Recargar datos de prueba (borra todo y recrea)
+```
+
+## ENOSPC (file watchers)
+
+Si aparece `Watchpack Error (watcher): Error: ENOSPC` al hacer `npm run dev`:
+
+```bash
+sudo sysctl -w fs.inotify.max_user_watches=524288
+```
